@@ -21,7 +21,7 @@ function FeatureAssistants() {
 
             <div className='grid grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-10 mt-10'>
                 {ExpertsList.map((option, index) => (
-                  <BlurFade key={imageUrl} delay={0.25 + idx * 0.05} inView>
+                  <BlurFade key={option.icon} delay={0.25 + index * 0.05} inView>
                     <div key={index} className='p-3 bg-secondary rounded-3xl flex flex-col justify-center items-center'> 
                         <Image
                             src={option.icon}
