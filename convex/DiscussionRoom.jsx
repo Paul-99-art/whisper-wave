@@ -9,7 +9,7 @@ export const CreateNewRoom = mutation({
     },
     handler: async(ctx, args) => {
         const result = await ctx.db.insert('DiscussionRoom', {
-            coachingOptions: args.coachingOptions,  // Fixed: using coachingOptions not coachingOption
+            coachingOptions: args.coachingOptions,  
             topic: args.topic,
             expertName: args.expertName
         });

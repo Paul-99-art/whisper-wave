@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Dialog,
     DialogClose,
@@ -16,16 +17,21 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { LoaderCircle } from 'lucide-react';
 
+
+
 function UserInputDialog({ children, coachingoption }) {
     const [selectedExpert, setSelectedExpert] = useState();
     const [topic, setTopic] = useState();
     const createDiscussionRoom = useMutation(api.DiscussionRoom.CreateNewRoom);  
     const [loading, setLoading] = useState(false);
-    
+    const [openDialog, setOpenDialog] = useState(false);
+    const router = useRouter();   
+
     const OnClickNext = async() => {
         setLoading(true);
+        let result;
         try {
-            const result = await createDiscussionRoom({
+            result = await createDiscussionRoom({
                 topic: topic,
                 coachingOptions: coachingoption?.name,  
                 expertName: selectedExpert
@@ -33,13 +39,17 @@ function UserInputDialog({ children, coachingoption }) {
             console.log(result);
         } catch (error) {
             console.error("Error creating discussion room:", error);
+            setLoading(false);
+            return;
         } finally {
             setLoading(false);
         }
+        setOpenDialog(false);
+        router.push('/discussion-room/'+ result); 
     };
     
     return (
-        <Dialog>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger>{children}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -53,7 +63,7 @@ function UserInputDialog({ children, coachingoption }) {
                                 onChange={(e) => setTopic(e.target.value)}
                             ></textarea>
                             <h2 className='text-black mt-5'>Select an expert to assist you in {coachingoption.name}</h2>
-                            <div className='grid grid-cols-3 md:grid-cols-5 gap-6 mt-3'>
+                            <div className='grid grid-cols-3 md:grid-cols-5 gap-6 mt-3 '>
                                 {CoachingExpert.map((expert, index) => (
                                     <div 
                                         key={index} 
@@ -65,7 +75,7 @@ function UserInputDialog({ children, coachingoption }) {
                                             alt={expert.name}
                                             width={100}
                                             height={100}
-                                            className={`rounded-2xl h-[80px] w-[80px] object-cover hover:scale-105 transition:all cursor-pointer p-3 border-primary 
+                                            className={`rounded-2xl h-[80px] w-[80px] object-cover  hover:scale-105 transition:all cursor-pointer p-3 border-primary 
                                                 ${selectedExpert == expert.name && 'border'}`}
                                         /> 
                                         <h2 className='text-center text-black'>{expert.name}</h2>
